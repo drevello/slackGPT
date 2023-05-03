@@ -68,18 +68,25 @@ async def handle_direct_messages(body, say):
 
 @app.command("/slackgpt")
 async def handle_slash_command(ack, respond, command):
-    # Acknowledge the command request
-    await ack()
-    
-    # Extract the text from the command
-    text = command["text"]
+    try:
+        logging.info("Handling slash command")
+        
+        # Acknowledge the command request
+        await ack()
+        logging.info("Command acknowledged")
 
-    # Get the response from GPT-3
-    assistant_reply = chat_with_gpt(text)
+        # Extract the text from the command
+        text = command["text"]
 
-    # Respond to the user with the GPT-3 response
-    await respond(assistant_reply)
+        # Get the response from GPT-3
+        assistant_reply = chat_with_gpt(text)
 
+        # Respond to the user with the GPT-3 response
+        await respond(assistant_reply)
+        logging.info("Response sent")
+
+    except Exception as e:
+        logging.exception(f"Error handling slash command: {e}")
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, SLACK_APP_TOKEN)
