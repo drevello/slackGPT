@@ -32,6 +32,7 @@ async def chat_with_gpt(prompt):
 
 @app.event("app_mention")
 async def handle_app_mentions(body, say):
+    say(f'holaaaa')
     print("App mention event received:", body)
     text = body['event']['text']
     user = body['event']['user']
@@ -50,6 +51,7 @@ async def handle_app_mentions(body, say):
 
 @app.event("message")
 async def handle_direct_messages(body, say):
+    say(f'holaaaa')
     event = body['event']
     if event.get('channel_type') == 'im':
         text = event['text']
