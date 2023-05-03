@@ -69,7 +69,7 @@ async def handle_direct_messages(body, say):
 
         await say(f"<@{user}> {assistant_reply}")
 
-@app.async_command("/slackgpt")
+@app.command("/slackgpt")
 async def handle_slash_command(ack, respond, command):
     try:
         logging.info("Handling slash command")
@@ -92,7 +92,6 @@ async def handle_slash_command(ack, respond, command):
 
     except Exception as e:
         logging.exception(f"Error handling slash command: {e}")
-
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, SLACK_APP_TOKEN)
