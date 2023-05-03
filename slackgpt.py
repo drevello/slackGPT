@@ -93,6 +93,7 @@ async def handle_slash_command(ack, respond, command):
     except Exception as e:
         logging.exception(f"Error handling slash command: {e}")
 
+
 if __name__ == "__main__":
     handler = SocketModeHandler(app, SLACK_APP_TOKEN)
     handler.start()
