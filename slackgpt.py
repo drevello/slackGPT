@@ -66,7 +66,7 @@ async def handle_direct_messages(body, say):
 
                 # Get a response from GPT
                 print(f"Cleaned text: {cleaned_text}")
-                gpt_response = await get_gpt_response(cleaned_text)
+                gpt_response = await chat_with_gpt(cleaned_text)  # Changed this line
                 print(f"GPT response: {gpt_response}")
 
                 # Send the response to the user
@@ -76,6 +76,7 @@ async def handle_direct_messages(body, say):
 
             except Exception as e:
                 print(f"Error responding to message: {e}")
+
 
 @app.command("/slackgpt")
 async def handle_slash_command(ack, respond, command):
