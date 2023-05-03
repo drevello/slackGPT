@@ -61,9 +61,13 @@ async def handle_direct_messages(body, say):
                 cleaned_text = text.replace(f'<@{slack_bot_user_id}>', '').strip()
 
                 # Get a response from GPT
+                print(f"Cleaned text: {cleaned_text}")
                 gpt_response = await get_gpt_response(cleaned_text)
+                print(f"GPT response: {gpt_response}")
 
                 # Send the response to the user
+                print(f"User: {user}")
+                print(f"Response: {gpt_response}")
                 await say(f'<@{user}> {gpt_response}')
 
             except Exception as e:
