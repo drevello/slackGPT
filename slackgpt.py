@@ -69,7 +69,7 @@ async def handle_direct_messages(body, say):
 
         await say(f"<@{user}> {assistant_reply}")
 
-@app.command("/slackgpt")
+@app.async_command("/slackgpt")
 async def handle_slash_command(ack, respond, command):
     try:
         logging.info("Handling slash command")
