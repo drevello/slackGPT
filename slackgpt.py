@@ -79,7 +79,9 @@ async def handle_slash_command(ack, respond, command):
         text = command["text"]
 
         # Get the response from GPT-3
+        logging.info("Getting response from GPT-3")
         assistant_reply = await chat_with_gpt(text)
+        logging.info(f"Assistant reply: {assistant_reply}")
 
         # Respond to the user with the GPT-3 response
         await respond(assistant_reply)
