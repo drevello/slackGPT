@@ -4,6 +4,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from dotenv import load_dotenv
 import logging
+import asyncio
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
 load_dotenv()
@@ -67,12 +68,12 @@ async def handle_direct_messages(body, say):
         await say(f"<@{user}> {assistant_reply}")
 
 @app.command("/slackgpt")
-async def handle_slash_command(ack, respond, command):
+def handle_slash_command(ack, respond, command):
     try:
         logging.info("Handling slash command")
         
         # Acknowledge the command request
-        await ack()
+        asyncio.run(ack())
         logging.info("Command acknowledged")
 
         # Extract the text from the command
@@ -80,11 +81,11 @@ async def handle_slash_command(ack, respond, command):
 
         # Get the response from GPT-3
         logging.info("Getting response from GPT-3")
-        assistant_reply = await chat_with_gpt(text)
+        assistant_reply = asyncio.run(chat_with_gpt(text))
         logging.info(f"Assistant reply: {assistant_reply}")
 
         # Respond to the user with the GPT-3 response
-        await respond(assistant_reply)
+        asyncio.run(respond(assistant_reply))
         logging.info("Response sent")
 
     except Exception as e:
