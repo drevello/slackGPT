@@ -17,7 +17,9 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 app = App()
 
 async def chat_with_gpt(prompt):
-    response = await openai.ChatCompletion.create(
+    openai.api_key = OPENAI_API_KEY
+    response = await asyncio.to_thread(
+        openai.ChatCompletion.create,
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
@@ -68,12 +70,12 @@ async def handle_direct_messages(body, say):
         await say(f"<@{user}> {assistant_reply}")
 
 @app.command("/slackgpt")
-def handle_slash_command(ack, respond, command):
+async def handle_slash_command(ack, respond, command):
     try:
         logging.info("Handling slash command")
         
         # Acknowledge the command request
-        asyncio.run(ack())
+        await ack()
         logging.info("Command acknowledged")
 
         # Extract the text from the command
@@ -81,11 +83,11 @@ def handle_slash_command(ack, respond, command):
 
         # Get the response from GPT-3
         logging.info("Getting response from GPT-3")
-        assistant_reply = asyncio.run(chat_with_gpt(text))
+        assistant_reply = await chat_with_gpt(text)
         logging.info(f"Assistant reply: {assistant_reply}")
 
         # Respond to the user with the GPT-3 response
-        asyncio.run(respond(assistant_reply))
+        await respond(assistant_reply)
         logging.info("Response sent")
 
     except Exception as e:
