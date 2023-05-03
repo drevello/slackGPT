@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
-
 load_dotenv()
 
 SLACK_APP_TOKEN = os.environ["SLACK_APP_TOKEN"]
@@ -28,8 +27,6 @@ def chat_with_gpt(prompt):
     message = response.choices[0].message["content"].strip()
     return message
 
-app = App()
-
 @app.event("app_mention")
 async def handle_app_mentions(body, say):
     print("App mention event received:", body)
@@ -47,6 +44,27 @@ async def handle_app_mentions(body, say):
     assistant_reply = response.choices[0].message.content
 
     await say(f"<@{user}> {assistant_reply}")
+
+@app.event("message")
+async def handle_direct_messages(body, say):
+    print("Message event received:", body)
+    channel_type = body['event'].get('channel_type')
+    
+    if channel_type == 'im':
+        text = body['event']['text']
+        user = body['event']['user']
+
+        openai.api_key = OPENAI_API_KEY
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": text}
+            ]
+        )
+        assistant_reply = response.choices[0].message.content
+
+        await say(f"<@{user}> {assistant_reply}")
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, SLACK_APP_TOKEN)
