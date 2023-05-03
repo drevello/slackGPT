@@ -48,7 +48,7 @@ async def handle_app_mentions(body, say):
 
     await say(f"<@{user}> {assistant_reply}")
 
-@app.event("app_mention")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ...
+@app.event("app_mention")
 async def handle_direct_messages(body, say):
     text = body['event']['text']
     user = body['event']['user']
