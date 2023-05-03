@@ -58,6 +58,7 @@ async def handle_direct_messages(body, say):
         user = event['user']
 
         await say(f'holaaaa')
+        print("Initial message sent")  # Added this line
 
         if f'<@{slack_bot_user_id}>' in text:
             try:
@@ -66,7 +67,7 @@ async def handle_direct_messages(body, say):
 
                 # Get a response from GPT
                 print(f"Cleaned text: {cleaned_text}")
-                gpt_response = await chat_with_gpt(cleaned_text)  # Changed this line
+                gpt_response = await chat_with_gpt(cleaned_text)
                 print(f"GPT response: {gpt_response}")
 
                 # Send the response to the user
@@ -76,6 +77,10 @@ async def handle_direct_messages(body, say):
 
             except Exception as e:
                 print(f"Error responding to message: {e}")
+        else:
+            print("Bot not mentioned in the message")  # Added this line
+    else:
+        print("Not an IM event")  # Added this line
 
 
 @app.command("/slackgpt")
