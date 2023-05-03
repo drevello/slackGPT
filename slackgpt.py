@@ -15,8 +15,8 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 # Initialize the Slack app
 app = App()
 
-def chat_with_gpt(prompt):
-    response = openai.ChatCompletion.create(
+async def chat_with_gpt(prompt):
+    response = await openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
@@ -79,7 +79,7 @@ async def handle_slash_command(ack, respond, command):
         text = command["text"]
 
         # Get the response from GPT-3
-        assistant_reply = chat_with_gpt(text)
+        assistant_reply = await chat_with_gpt(text)
 
         # Respond to the user with the GPT-3 response
         await respond(assistant_reply)
