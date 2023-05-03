@@ -1,6 +1,6 @@
 import os
 import openai
-from slack_bolt import App
+from slack_bolt import App, Say
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from dotenv import load_dotenv
 import logging
@@ -48,26 +48,24 @@ async def handle_app_mentions(body, say):
 
     await say(f"<@{user}> {assistant_reply}")
 
-@app.event("message")
+@app.event("app_mention")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ...
 async def handle_direct_messages(body, say):
-    print("Message event received:", body)
-    channel_type = body['event'].get('channel_type')
+    text = body['event']['text']
+    user = body['event']['user']
     
-    if channel_type == 'im':
-        text = body['event']['text']
-        user = body['event']['user']
+    if f'<@{slack_bot_user_id}>' in text:
+        try:
+            # Remove the mention itself from the text and strip leading/trailing whitespaces
+            cleaned_text = text.replace(f'<@{slack_bot_user_id}>', '').strip()
+            
+            # Get a response from GPT
+            gpt_response = await get_gpt_response(cleaned_text)
+            
+            # Send the response to the user
+            await say(f'<@{user}> {gpt_response}')
 
-        openai.api_key = OPENAI_API_KEY
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": text}
-            ]
-        )
-        assistant_reply = response.choices[0].message.content
-
-        await say(f"<@{user}> {assistant_reply}")
+        except Exception as e:
+            print(f"Error responding to message: {e}")
 
 @app.command("/slackgpt")
 async def handle_slash_command(ack, respond, command):
