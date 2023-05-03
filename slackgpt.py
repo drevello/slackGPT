@@ -48,24 +48,26 @@ async def handle_app_mentions(body, say):
 
     await say(f"<@{user}> {assistant_reply}")
 
-@app.event("app_mention")
+@app.event("message")
 async def handle_direct_messages(body, say):
-    text = body['event']['text']
-    user = body['event']['user']
-    
-    if f'<@{slack_bot_user_id}>' in text:
-        try:
-            # Remove the mention itself from the text and strip leading/trailing whitespaces
-            cleaned_text = text.replace(f'<@{slack_bot_user_id}>', '').strip()
-            
-            # Get a response from GPT
-            gpt_response = await get_gpt_response(cleaned_text)
-            
-            # Send the response to the user
-            await say(f'<@{user}> {gpt_response}')
+    event = body['event']
+    if event.get('channel_type') == 'im':
+        text = event['text']
+        user = event['user']
 
-        except Exception as e:
-            print(f"Error responding to message: {e}")
+        if f'<@{slack_bot_user_id}>' in text:
+            try:
+                # Remove the mention itself from the text and strip leading/trailing whitespaces
+                cleaned_text = text.replace(f'<@{slack_bot_user_id}>', '').strip()
+
+                # Get a response from GPT
+                gpt_response = await get_gpt_response(cleaned_text)
+
+                # Send the response to the user
+                await say(f'<@{user}> {gpt_response}')
+
+            except Exception as e:
+                print(f"Error responding to message: {e}")
 
 @app.command("/slackgpt")
 async def handle_slash_command(ack, respond, command):
